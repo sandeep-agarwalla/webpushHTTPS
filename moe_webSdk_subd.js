@@ -230,10 +230,15 @@ if(dataToServiceWorker[""] == undefined){
          var subscriptionUpdate = function(subscription, param) {
              if (!subscription) {
                  subscriptionId = null;
+                 
                  if (param == 'unsubscribed') {
                      track_event("MOE_USER_UNSUBSCRIBED", {
                          'MOE_WEB_PUSH_TOKEN': 'false'
                      });
+                 } else if (param == undefined) {
+                    track_event("MOE_USER_SUBSCRIPTION_CHECK", {
+                        'MOE_WEB_PUSH_TOKEN': 'false'
+                    });
                  };
                  dataToServiceWorker['push_id'] = subscriptionId;
                  navigator.serviceWorker.controller.postMessage({
@@ -247,11 +252,13 @@ if(dataToServiceWorker[""] == undefined){
              navigator.serviceWorker.controller.postMessage({
                                  'data': dataToServiceWorker
              });
-             // ToDo Need to remove this completely before making it live
-             // var curlCodeElement = document.querySelector('.js-curl-code');
-             // curlCodeElement.innerHTML = subscriptionId;
+
              if (param == 'subscribed') {
                  track_event("MOE_USER_SUBSCRIBED", {
+                     'MOE_WEB_PUSH_TOKEN': subscriptionId
+                 });
+             } else if (param == undefined) {
+                 track_event("MOE_USER_SUBSCRIPTION_CHECK", {
                      'MOE_WEB_PUSH_TOKEN': subscriptionId
                  });
              }
@@ -287,6 +294,10 @@ if(dataToServiceWorker[""] == undefined){
                                  permissionState.state !== 'prompt') {
                                  // If the permission wasnt denied or prompt, that means the
                                  // permission was accepted, so this must be an error
+                             }
+
+                             if (permissionState.state == 'denied') {
+                                 // window.close(); // Close popup after getting user permission
                              }
                          });
                  });
