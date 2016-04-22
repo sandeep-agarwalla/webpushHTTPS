@@ -270,6 +270,7 @@ if(dataToServiceWorker[""] == undefined){
                  .then(function(subscription) {
                      subscriptionUpdate(subscription, 'subscribed');
                      var webPushPermission = localStorage.getItem("ask_web_push");
+                     window.close();
                  })
                  .catch(function(subscriptionErr) {
                      console.log('User Subscription Error', subscriptionErr);

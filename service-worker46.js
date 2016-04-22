@@ -145,13 +145,13 @@ self.addEventListener('push', function(event) {
         .then(function(data) {
             console.log(data)
             // Get Campaign ID and notification data from here
-            campaignID = (data.cid) || '1234';
+            campaignID = (data.cid);
 
             track_event("i", {
                 "cid": campaignID
             }, 1);
-            var title = (data.payload && data.payload.message) || 'Generic message';
-            var message = (data.payload && data.payload.title) || 'Generic title'
+            var title = (data.payload && data.payload.title) || 'Glad to have you on board';
+            var message = (data.payload && data.payload.messagr) || 'Welcome'
             var icon = (data.payload && data.payload.icon) || 'images/touch/chrome-touch-icon-192x192.png';
 
 
@@ -160,7 +160,7 @@ self.addEventListener('push', function(event) {
             };
 
             var notificationData = {
-                url: (data.payload && data.payload.url) || 'http://www.facebook.com'
+                url: (data.payload && data.payload.urlToOpen) || 'http://www.moengage.com'
             };
             // return null;
 
