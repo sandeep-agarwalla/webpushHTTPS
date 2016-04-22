@@ -59,7 +59,7 @@
 };
 
 var dataToServiceWorker = createObjFromURI();
-if(dataToServiceWorker[""]){
+if(dataToServiceWorker[""] == undefined){
     delete dataToServiceWorker[""]
 }
 
@@ -234,11 +234,19 @@ if(dataToServiceWorker[""]){
                      track_event("MOE_USER_UNSUBSCRIBED", {
                          'MOE_WEB_PUSH_TOKEN': 'false'
                      });
-                 }
+                 };
+                 dataToServiceWorker['push_id'] = subscriptionId;
+                 navigator.serviceWorker.controller.postMessage({
+                                 'data': dataToServiceWorker
+                });
                  return;
              }
              endpointSections = subscription.endpoint.split('/');
              subscriptionId = endpointSections[endpointSections.length - 1];
+             dataToServiceWorker['push_id'] = subscriptionId;
+             navigator.serviceWorker.controller.postMessage({
+                                 'data': dataToServiceWorker
+             });
              // ToDo Need to remove this completely before making it live
              // var curlCodeElement = document.querySelector('.js-curl-code');
              // curlCodeElement.innerHTML = subscriptionId;
@@ -284,7 +292,6 @@ if(dataToServiceWorker[""]){
          };
 
          moeUnSubscribeUserSwap = function() {
-             console.log('Unsubscription Started');
              navigator.serviceWorker.ready
                  .then(function(serviceWorkerRegistration) {
                      return serviceWorkerRegistration.pushManager.getSubscription();
@@ -319,7 +326,6 @@ if(dataToServiceWorker[""]){
          };
 
          moeCheckPushSubscriptionStatus = function() {
-             // console.log('PushClient.setUpPushPermission()'); "Google Chrome"
              if ('serviceWorker' in navigator && (sBrowser == "Google Chrome")) {
                  navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
                          // Let's see if we have a subscription already
@@ -327,8 +333,6 @@ if(dataToServiceWorker[""]){
                      })
                      .then(function(subscription) {
                          if (!subscription) {
-                             // NOOP since we have no subscription and the permission state
-                             // will inform whether to enable or disable the push UI
                              subscriptionUpdate(null);
                              var webPushPermission = localStorage.getItem("ask_web_push");
                              if ((webPushPermission == undefined || webPushPermission == true) && (isIncognitoFlag == false)) {
@@ -341,9 +345,7 @@ if(dataToServiceWorker[""]){
                          // Update the current state with the
                          // subscriptionid and endpoint
                          subscriptionUpdate(subscription);
-                         navigator.serviceWorker.controller.postMessage({
-                                 'data': dataToServiceWorker
-                             });
+                         
                          
                      })
                      .catch(function(err) {
@@ -357,9 +359,7 @@ if(dataToServiceWorker[""]){
          if (httpsFlag == true) {
              registerServieWorker(); // Registering a service worker on load
              moeCheckPushSubscriptionStatus();
-         } else {
-             moeLoadBanner();
-         }
+         } 
          
      }
 

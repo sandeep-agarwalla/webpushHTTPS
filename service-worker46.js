@@ -7,6 +7,8 @@ var sendDataToServerURL = "https://websdk.moengage.com";
 var getDataFromServerURL = "https://websdk.moengage.com/get/webpush/payload";
 var moeDB = new PouchDB('moe_database');
 var campaignID;
+var subscriptionId;
+
 
 function constructGet(url, params) {
     url = url + "?"
@@ -37,7 +39,8 @@ function track_event(eventName, attrs, flag) {
 
         var utc_timestamp = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds());
 
-        get_data.uid.data["device_ts"] = Number(utc_timestamp)
+        get_data.uid.data["device_ts"] = Number(utc_timestamp);
+        get_data.uid.data["push_id"] = subscriptionId;
         var url = constructGet(url_cons, get_data.uid.data)
         fetch(url, {
                 method: 'POST',
@@ -54,8 +57,7 @@ function track_event(eventName, attrs, flag) {
 
 function splitEndPointSubscription(subscriptionDetails) {
     var endpointURL = 'https://android.googleapis.com/gcm/send/',
-        endpoint = subscriptionDetails.endpoint,
-        subscriptionId;
+        endpoint = subscriptionDetails.endpoint;
     if (endpoint.indexOf(endpointURL) === 0) {
         return subscriptionId = endpoint.replace(endpointURL, '');
     }
@@ -126,7 +128,7 @@ self.addEventListener('push', function(event) {
             return self.registration.pushManager.getSubscription()
         })
         .then(function(subscription) {
-            var subscriptionId = splitEndPointSubscription(subscription);
+            subscriptionId = splitEndPointSubscription(subscription);
             var MOE_API_ENDPOINT2 = getDataFromServerURL + "?";
             MOE_API_ENDPOINT2 += "app_id=" + moeVar.app_id + "&" + "unique_id=" + moeVar.unique_id
             return fetch(MOE_API_ENDPOINT2)
