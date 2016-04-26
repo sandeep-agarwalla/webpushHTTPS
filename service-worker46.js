@@ -88,10 +88,7 @@ self.addEventListener('activate', function(event) {
 });
 
 self.addEventListener('message', function(evt) {
-
-    moeDB.destroy().then(function () {
-        moeDB = new PouchDB('moe_database');
-        moeDB.get('moe_variables', function(err, doc) {
+    moeDB.get('moe_variables', function(err, doc) {
         if (err) {
             moeDB.put({
                 _id: 'moe_variables',
@@ -115,10 +112,6 @@ self.addEventListener('message', function(evt) {
             });
         }
     });
-}).catch(function (err) {
-  // error occurred
-})
-    
 });
 
 self.addEventListener('push', function(event) {
