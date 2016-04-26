@@ -220,7 +220,7 @@ if(dataToServiceWorker[""] == undefined){
          var registerServieWorker = function() {
              if ('serviceWorker' in navigator) {
                  navigator.serviceWorker.register('service-worker46.js', {
-                     scope: './'
+                     scope: './home'
                  });
              } else {
                  console.log('Servie Worker Not Supported');
