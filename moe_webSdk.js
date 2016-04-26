@@ -198,7 +198,7 @@
          var now = new Date().getTime(); // Get current time
          var setupTime = localStorage.getItem('moeWebSDKSettingsSetupTime');
          if (setupTime == null) {
-             makeGet("http://prp.moengage.com/websdksettings", {
+             makeGet("https://websdk.moengage.com/websdksettings", {
                  "app_id": self.moe_data["app_id"]
              }, function(data) {
                  // data = JSON.parse(data);
@@ -216,7 +216,7 @@
          } else {
              if (now - setupTime > hours * 60 * 60 * 1000) {
 
-                 makeGet("http://prp.moengage.com/websdksettings", {
+                 makeGet("https://websdk.moengage.com/websdksettings", {
                      "app_id": self.moe_data["app_id"]
                  }, function(data) {
                      // data = JSON.parse(data);
