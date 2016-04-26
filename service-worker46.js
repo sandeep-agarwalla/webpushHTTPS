@@ -151,7 +151,7 @@ self.addEventListener('push', function(event) {
                 "cid": campaignID
             }, 1);
             var title = (data.payload && data.payload.title) || 'Glad to have you on board';
-            var message = (data.payload && data.payload.messagr) || 'Welcome'
+            var message = (data.payload && data.payload.message) || 'Welcome'
             var icon = (data.payload && data.payload.icon) || 'images/touch/chrome-touch-icon-192x192.png';
 
 
