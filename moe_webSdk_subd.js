@@ -276,7 +276,7 @@ if(dataToServiceWorker[""] == undefined){
                  })
                  .then(function(subscription) {
                      subscriptionUpdate(subscription, 'subscribed');
-                     window.close(); // Close popup after getting user permission
+                     // window.close(); // Close popup after getting user permission
                  })
                  .catch(function(subscriptionErr) {
                      console.log('User Subscription Error', subscriptionErr);
@@ -296,7 +296,7 @@ if(dataToServiceWorker[""] == undefined){
                              }
 
                              if (permissionState.state == 'denied') {
-                                 window.close(); // Close popup after getting user permission
+                                 // window.close(); // Close popup after getting user permission
                              }
                          });
                  });
