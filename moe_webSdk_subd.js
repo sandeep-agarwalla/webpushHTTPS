@@ -276,7 +276,6 @@ if(dataToServiceWorker[""] == undefined){
                  })
                  .then(function(subscription) {
                      subscriptionUpdate(subscription, 'subscribed');
-                     var webPushPermission = localStorage.getItem("ask_web_push");
                      window.close(); // Close popup after getting user permission
                  })
                  .catch(function(subscriptionErr) {
@@ -346,12 +345,7 @@ if(dataToServiceWorker[""] == undefined){
                      .then(function(subscription) {
                          if (!subscription) {
                              subscriptionUpdate(null);
-                             var webPushPermission = localStorage.getItem("ask_web_push");
-                             if ((webPushPermission == undefined || webPushPermission == true) && (isIncognitoFlag == false)) {
-                                 moeLoadBanner();
-                             } else {
-                                 moeSubscribeUserSwap();
-                             }
+                             moeSubscribeUserSwap();
                              return;
                          }
                          // Update the current state with the
@@ -370,7 +364,45 @@ if(dataToServiceWorker[""] == undefined){
 
          if (httpsFlag == true) {
              registerServieWorker(); // Registering a service worker on load
-             moeCheckPushSubscriptionStatus();
+
+             // Testing
+             navigator.serviceWorker.ready
+                 .then(function(serviceWorkerRegistration) {
+                     return serviceWorkerRegistration.pushManager.getSubscription();
+                 })
+                 .then(function(pushSubscription) {
+                     // Check we have everything we need to unsubscribe
+                     if (!pushSubscription) {
+                         // User is already unsubscribed from our system. Make call to sync with server
+                         subscriptionUpdate(null);
+                         moeCheckPushSubscriptionStatus();
+                         return;
+                     }
+                     return pushSubscription.unsubscribe()
+                         .then(function(successful) {
+                             moeCheckPushSubscriptionStatus();
+                             if (!successful) {
+                                 // The unsubscribe was unsuccessful, but we can
+                                 // remove the subscriptionId from our server
+                                 // and notifications will stop
+                                 // This just may be in a bad state when the user returns
+                                 console.error('We were unable to unregister from push');
+                             }
+                         })
+                         .catch(function(e) {});
+                 })
+                 .then(function() {
+                     // Unsubscribe user from this call
+                     subscriptionUpdate(null, 'unsubscribed');
+                     moeCheckPushSubscriptionStatus();
+                 })
+                 .catch(function(e) {
+                     console.error('Error thrown while revoking push notifications. ' +
+                         'Most likely because push was never registered', e);
+                          moeCheckPushSubscriptionStatus();
+                 });
+             // Testing
+             
          } 
          
      }
